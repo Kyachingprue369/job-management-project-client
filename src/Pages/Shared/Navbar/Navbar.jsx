@@ -11,10 +11,8 @@ const Navbar = () => {
     <li><NavLink to="/">Home</NavLink></li>
     <li><NavLink to="/myApplications">My Applications</NavLink></li>
     <li><NavLink to="/addJob">Add Jobs</NavLink></li>
-    <li>Candidates</li>
-    <li>Pages</li>
-    <li>Blog</li>
-    <li>Contact</li>
+    <li><NavLink to="/allJobsCard">All Jobs</NavLink></li>
+    <li><NavLink to="/myPostedJobs">My Posted Jobs</NavLink></li>
   </div>
 
   //user log out option declare

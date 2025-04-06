@@ -1,6 +1,11 @@
 import React from 'react';
+import useAuth from '../../Hooks/useAuth';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const AddJob = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleAddJob = event => {
     event.preventDefault();
@@ -8,8 +13,30 @@ const AddJob = () => {
     const initialData = Object.fromEntries(formData.entries());
     console.log(initialData);
     const { min, max, currency, ...newJob } = initialData;
-    console.log(newJob);
     newJob.salaryRange = { min, max, currency };
+    newJob.requirements = newJob.requirements.split('\n');
+    newJob.responsibilities = newJob.responsibilities.split('\n')
+    console.log(newJob);
+
+    //Send to Database
+    fetch('http://localhost:5000/jobs', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify(newJob)
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.insertedId) {
+          toast('🦄 Wow job has been added!', {
+            position: "top-right",
+            autoClose: 3000
+          })
+
+        }
+        navigate("/allJobsCard")
+      })
   }
   return (
     <div className='w-10/12 mx-auto'>
@@ -18,7 +45,7 @@ const AddJob = () => {
         <div className='my-4 md:flex items-center gap-6'>
           <div className=' md:flex-1'>
             <label className="fieldset-label pb-2">Job Type</label>
-            <select defaultValue="Pick a color" name='jobType' className="select select-info w-full" required>
+            <select defaultValue="Full-time" name='jobType' className="select select-info w-full" required>
               <option disabled={true}>Pick a Job</option>
               <option>Full-time</option>
               <option>Intern</option>
@@ -155,7 +182,7 @@ const AddJob = () => {
           </div>
           <div className='md:flex-1'>
             <label className="fieldset-label pb-2">HR Email</label>
-            <input type="email" className="input input-info w-full" name='hr_email' placeholder="Enter hr email" required />
+            <input type="email" defaultValue={user.email} className="input input-info w-full" name='hr_email' placeholder="Enter hr email" required />
           </div>
         </div>
         {/* Final company logo */}
